@@ -3,6 +3,7 @@ import os
 import glob
 import cv2
 import shutil
+import json
 from sahi.slicing import slice_coco
 from sahi.utils.coco import Coco
 
@@ -11,6 +12,15 @@ def main(args):
 
   shutil.rmtree(os.path.join(args.coco_annotation_dir, "yolo"), ignore_errors=True)
   shutil.rmtree(os.path.join(args.coco_annotation_dir, "sliced"), ignore_errors=True)
+
+
+  with open(os.path.join(args.coco_annotation_dir, "instances_default.json")) as f:
+    data = json.load(f)
+
+  data["images"] = [{**image, "file_name": os.path.splitext(image["file_name"])[0] + ".tif"} for image in data["images"]]
+  
+  with open(os.path.join(args.coco_annotation_dir, "instances_default_tif.json"), "w") as f:
+      data = json.dump(data, f)
 
   coco_dict, coco_path = slice_coco(
       coco_annotation_file_path=os.path.join(args.coco_annotation_dir, "instances_default.json"),
