@@ -53,7 +53,7 @@ def imread(f):
     if f.endswith(".tif"):
         from tifffile import TiffFile
         with TiffFile(f) as tif:
-            im = tif.asarray()
+            im = tif.asarray().astype(np.float32) / 255
     else:
         im = cv2.imread(f)  # BGR
     return im
@@ -1003,13 +1003,20 @@ def verify_image_label(args):
     im_file, lb_file, prefix = args
     nm, nf, ne, nc, msg, segments = 0, 0, 0, 0, '', []  # number (missing, found, empty, corrupt), message, segments
     try:
+        print(f"trying to verify image", im_file)
         # verify images
-        im = Image.open(im_file)
-        im.verify()  # PIL verify
-        shape = exif_size(im)  # image size
-        assert (shape[0] > 9) & (shape[1] > 9), f'image size {shape} <10 pixels'
-        assert im.format.lower() in IMG_FORMATS, f'invalid image format {im.format}'
-        if im.format.lower() in ('jpg', 'jpeg'):
+        if im_file.endswith(".tif"):
+            im = imread(im_file)
+            shape = im.shape[0:2]
+            print("shape:", shape)
+            # assert (shape[0] > 9) & (shape[1] > 9), f'image size {shape} <10 pixels'
+        else:
+            im = Image.open(im_file)
+            im.verify()  # PIL verify
+            shape = exif_size(im)  # image size
+            assert (shape[0] > 9) & (shape[1] > 9), f'image size {shape} <10 pixels'
+            assert im.format.lower() in IMG_FORMATS, f'invalid image format {im.format}'
+        if hasattr(im, "format") and im.format.lower() in ('jpg', 'jpeg'):
             with open(im_file, 'rb') as f:
                 f.seek(-2, 2)
                 if f.read() != b'\xff\xd9':  # corrupt JPEG

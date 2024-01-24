@@ -135,6 +135,17 @@ def train(hyp, opt, device, callbacks):  # hyp is path/to/hyp.yaml or hyp dictio
         LOGGER.info(f'Transferred {len(csd)}/{len(model.state_dict())} items from {weights}')  # report
     else:
         model = Model(cfg, ch=3, nc=nc, anchors=hyp.get('anchors')).to(device)  # create
+    num_input_channels = 8  # set to 3 for RGB and to 8 for more bands
+    model.model[0].conv = nn.Conv2d(
+        num_input_channels,
+        model.model[0].conv.out_channels,
+        model.model[0].conv.kernel_size,
+        model.model[0].conv.stride,
+        model.model[0].conv.padding,
+        model.model[0].conv.dilation,
+        model.model[0].conv.groups,
+    )
+    model.model[0].conv.reset_parameters()  # TODO: instead initialize from pretrained model
     amp = check_amp(model)  # check AMP
 
     # Freeze

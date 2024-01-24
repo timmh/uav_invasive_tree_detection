@@ -23,7 +23,7 @@ def main(args):
       data = json.dump(data, f)
 
   coco_dict, coco_path = slice_coco(
-      coco_annotation_file_path=os.path.join(args.coco_annotation_dir, "instances_default.json"),
+      coco_annotation_file_path=os.path.join(args.coco_annotation_dir, "instances_default_tif.json"),
       image_dir=args.coco_annotation_dir,
       output_coco_annotation_file_name=os.path.join(args.coco_annotation_dir, "instances_sliced"),
       output_dir=os.path.join(args.coco_annotation_dir, "sliced"),

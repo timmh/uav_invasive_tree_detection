@@ -1,9 +1,11 @@
 # Train/val/test sets as 1) dir: path/to/imgs, 2) file: path/to/imgs.txt, or 3) list: [path/to/imgs1, path/to/imgs2, ..]
-path: PATH_TO_DATA  # dataset root dir
-train: obj_train_data  # train images (relative to 'path') 128 images
-val: obj_train_data  # val images (relative to 'path') 128 images
+path: /Users/timm/Downloads/invasives/yolo  # dataset root dir
+train: train  # train images (relative to 'path') 128 images
+val: val  # val images (relative to 'path') 128 images
 test:  # test images (optional)
 
 # Classes
 names:
-  0: tree
+  0: firetree
+  1: yellow_himalayan_raspberry
+  2: miconia
